@@ -18,9 +18,6 @@ pbxproj_content = """// !$*UTF8*$!
 		010004 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020004 /* HealthKitManager.swift */; };
 		010005 /* MetricsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020007 /* MetricsEngine.swift */; };
 		010006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 020008 /* Assets.xcassets */; };
-		010007 /* AppIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 020009 /* AppIcon.png */; };
-		010008 /* AppIcon60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 020010 /* AppIcon60x60@2x.png */; };
-		010009 /* AppIcon60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 020011 /* AppIcon60x60@3x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,9 +30,6 @@ pbxproj_content = """// !$*UTF8*$!
 		020006 /* AirBand.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AirBand.entitlements; sourceTree = "<group>"; };
 		020007 /* MetricsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsEngine.swift; sourceTree = "<group>"; };
 		020008 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		020009 /* AppIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon.png; sourceTree = "<group>"; };
-		020010 /* AppIcon60x60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon60x60@2x.png"; sourceTree = "<group>"; };
-		020011 /* AppIcon60x60@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon60x60@3x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,9 +48,6 @@ pbxproj_content = """// !$*UTF8*$!
 			buildActionMask = 2147483647;
 			files = (
 				010006 /* Assets.xcassets in Resources */,
-				010007 /* AppIcon.png in Resources */,
-				010008 /* AppIcon60x60@2x.png in Resources */,
-				010009 /* AppIcon60x60@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,9 +71,6 @@ pbxproj_content = """// !$*UTF8*$!
 				020004 /* HealthKitManager.swift */,
 				020007 /* MetricsEngine.swift */,
 				020008 /* Assets.xcassets */,
-				020009 /* AppIcon.png */,
-				020010 /* AppIcon60x60@2x.png */,
-				020011 /* AppIcon60x60@3x.png */,
 				020005 /* Info.plist */,
 				020006 /* AirBand.entitlements */,
 			);
