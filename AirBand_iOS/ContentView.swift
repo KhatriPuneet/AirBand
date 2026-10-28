@@ -54,6 +54,40 @@ struct ContentView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 10)
 
+                    // MARK: - HealthKit Status / Prompt Banner
+                    if !hk.isAuthorized {
+                        Button(action: {
+                            hk.requestAuthorization()
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "heart.text.square.fill")
+                                    .foregroundColor(.red)
+                                    .font(.system(size: 24))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("CONNECT APPLE HEALTH")
+                                        .font(.system(size: 13, weight: .black, design: .rounded))
+                                        .foregroundColor(.white)
+                                    Text("Tap to grant permissions for HRV, Sleep & Bevel sync")
+                                        .font(.system(size: 11, weight: .medium))
+                                        .foregroundColor(.gray)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(.white.opacity(0.6))
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(Color(red: 0.15, green: 0.08, blue: 0.10))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color.red.opacity(0.4), lineWidth: 1)
+                            )
+                            .cornerRadius(14)
+                        }
+                        .padding(.horizontal, 16)
+                    }
+
                     // MARK: - WHOOP 3-RING HERO DASHBOARD
                     VStack(spacing: 16) {
                         HStack(spacing: 16) {
@@ -358,6 +392,11 @@ struct ContentView: View {
             self.recoveryScore = rec.score
             self.recoveryState = rec.state
             self.recoveryColor = (rec.color == "green" ? Color.green : (rec.color == "yellow" ? Color.yellow : Color.red))
+
+            // Automatically prompt HealthKit modal once the UI scene is visible
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                hk.requestAuthorization()
+            }
         }
     }
 }
