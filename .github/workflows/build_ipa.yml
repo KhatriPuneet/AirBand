@@ -1,4 +1,4 @@
-name: Build AirBand IPA for Sideloadly
+name: Build Zenflow IPA for Sideloadly
 
 on:
   push:
@@ -32,12 +32,14 @@ jobs:
       run: |
         cd AirBand_iOS
         mkdir -p Payload
-        cp -r ./build/AirBand.xcarchive/Products/Applications/AirBand.app Payload/
-        zip -r AirBand.ipa Payload
+        APP_PATH=$(find ./build/AirBand.xcarchive/Products/Applications -name "*.app" | head -n 1)
+        cp -r "$APP_PATH" Payload/
+        zip -r Zenflow.ipa Payload
+        cp Zenflow.ipa AirBand.ipa
 
-    - name: Upload AirBand.ipa Artifact
+    - name: Upload Zenflow.ipa Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: AirBand-IPA
-        path: AirBand_iOS/AirBand.ipa
+        name: Zenflow-IPA
+        path: AirBand_iOS/Zenflow.ipa
         retention-days: 7

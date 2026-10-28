@@ -26,8 +26,8 @@ struct ContentView: View {
                     // MARK: - Top Bar
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("AIRBAND EDGE")
-                                .font(.system(size: 20, weight: .black, design: .rounded))
+                            Text("ZENFLOW")
+                                .font(.system(size: 22, weight: .black, design: .rounded))
                                 .foregroundColor(.white)
                             Text(bt.isConnected ? "CONNECTED • \(bt.deviceName)" : (bt.isScanning ? "SEARCHING..." : "DISCONNECTED"))
                                 .font(.system(size: 11, weight: .bold))

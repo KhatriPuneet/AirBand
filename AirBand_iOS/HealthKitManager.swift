@@ -152,7 +152,7 @@ class HealthKitManager: ObservableObject {
                         self.lastSaveStatus = "Successfully exported \(samplesToSave.count) vitals to Apple Health!"
                         completion(true, "Successfully exported \(samplesToSave.count) vitals to Apple Health!\n\nBevel and Health app will now update.")
                     } else {
-                        let msg = error?.localizedDescription ?? "Please enable permissions in Settings -> Health -> Data Access & Devices -> AirBand."
+                        let msg = error?.localizedDescription ?? "Please enable permissions in Settings -> Health -> Data Access & Devices -> Zenflow."
                         self.lastSaveStatus = "Export error: \(msg)"
                         completion(false, msg)
                     }
