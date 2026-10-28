@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+RyzeWaveWatch/
+build/
+DerivedData/
+*.xcworkspace
+*.xcuserdata

@@ -1,0 +1,43 @@
+name: Build AirBand IPA for Sideloadly
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Select Xcode
+      run: sudo xcode-select -s /Applications/Xcode.app
+
+    - name: Build iOS Application (.app)
+      run: |
+        cd AirBand_iOS
+        xcodebuild -project AirBand.xcodeproj \
+          -scheme AirBand \
+          -sdk iphoneos \
+          -configuration Release \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGN_IDENTITY="" \
+          archive -archivePath ./build/AirBand.xcarchive
+
+    - name: Package into .ipa
+      run: |
+        cd AirBand_iOS
+        mkdir -p Payload
+        cp -r ./build/AirBand.xcarchive/Products/Applications/AirBand.app Payload/
+        zip -r AirBand.ipa Payload
+
+    - name: Upload AirBand.ipa Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AirBand-IPA
+        path: AirBand_iOS/AirBand.ipa
+        retention-days: 7
