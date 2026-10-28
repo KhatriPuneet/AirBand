@@ -23,9 +23,9 @@ jobs:
           -scheme AirBand \
           -sdk iphoneos \
           -configuration Release \
-          CODE_SIGN_IDENTITY="-" \
+          CODE_SIGNING_ALLOWED=NO \
           CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=YES \
+          CODE_SIGN_IDENTITY="" \
           archive -archivePath ./build/AirBand.xcarchive
 
     - name: Package into .ipa with Entitlements
@@ -36,11 +36,11 @@ jobs:
         cp -r "$APP_PATH" Payload/
         APP_DIR=$(find Payload -name "*.app" | head -n 1)
         
-        # Copy entitlements file into bundle
+        # Copy entitlements into bundle root
         cp AirBand.entitlements "$APP_DIR/archived-expanded-entitlements.xcent"
         cp AirBand.entitlements "$APP_DIR/AirBand.entitlements"
         
-        # Ad-hoc sign with entitlements embedded into Mach-O code signature
+        # Ad-hoc sign bundle with HealthKit entitlements
         codesign -s - --force --deep --entitlements AirBand.entitlements "$APP_DIR"
         
         # Verify embedded entitlements
