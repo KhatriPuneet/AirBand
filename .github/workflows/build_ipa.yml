@@ -23,17 +23,29 @@ jobs:
           -scheme AirBand \
           -sdk iphoneos \
           -configuration Release \
-          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGN_IDENTITY="-" \
           CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_ALLOWED=YES \
           archive -archivePath ./build/AirBand.xcarchive
 
-    - name: Package into .ipa
+    - name: Package into .ipa with Entitlements
       run: |
         cd AirBand_iOS
         mkdir -p Payload
         APP_PATH=$(find ./build/AirBand.xcarchive/Products/Applications -name "*.app" | head -n 1)
         cp -r "$APP_PATH" Payload/
+        APP_DIR=$(find Payload -name "*.app" | head -n 1)
+        
+        # Copy entitlements file into bundle
+        cp AirBand.entitlements "$APP_DIR/archived-expanded-entitlements.xcent"
+        cp AirBand.entitlements "$APP_DIR/AirBand.entitlements"
+        
+        # Ad-hoc sign with entitlements embedded into Mach-O code signature
+        codesign -s - --force --deep --entitlements AirBand.entitlements "$APP_DIR"
+        
+        # Verify embedded entitlements
+        codesign -d --entitlements :- "$APP_DIR"
+        
         zip -r Zenflow.ipa Payload
         cp Zenflow.ipa AirBand.ipa
 
