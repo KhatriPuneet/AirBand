@@ -16,6 +16,7 @@ pbxproj_content = """// !$*UTF8*$!
 		010002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020002 /* ContentView.swift */; };
 		010003 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020003 /* BluetoothManager.swift */; };
 		010004 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020004 /* HealthKitManager.swift */; };
+		010005 /* MetricsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020007 /* MetricsEngine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@ pbxproj_content = """// !$*UTF8*$!
 		020004 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
 		020005 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		020006 /* AirBand.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AirBand.entitlements; sourceTree = "<group>"; };
+		020007 /* MetricsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@ pbxproj_content = """// !$*UTF8*$!
 				020002 /* ContentView.swift */,
 				020003 /* BluetoothManager.swift */,
 				020004 /* HealthKitManager.swift */,
+				020007 /* MetricsEngine.swift */,
 				020005 /* Info.plist */,
 				020006 /* AirBand.entitlements */,
 			);
@@ -128,6 +131,7 @@ pbxproj_content = """// !$*UTF8*$!
 				010002 /* ContentView.swift in Sources */,
 				010003 /* BluetoothManager.swift in Sources */,
 				010004 /* HealthKitManager.swift in Sources */,
+				010005 /* MetricsEngine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
