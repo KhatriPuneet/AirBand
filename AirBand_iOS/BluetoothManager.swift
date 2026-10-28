@@ -88,6 +88,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         deviceName = peripheral.name ?? "Air Band"
         lastSyncStatus = "Connected! Discovering services..."
         peripheral.discoverServices([SVC_CMD, SVC_DATA])
+        startAutoSyncTimer()
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
@@ -95,6 +96,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         deviceName = "Not Connected"
         liveHeartRate = 0
         lastSyncStatus = "Disconnected. Auto-reconnecting..."
+        stopAutoSyncTimer()
         startScan()
     }
 
@@ -141,6 +143,22 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         p.writeValue(data, for: c, type: writeType)
     }
 
+    private var autoSyncTimer: Timer?
+
+    func startAutoSyncTimer() {
+        stopAutoSyncTimer()
+        // Recurring background sync every 15 minutes (900s)
+        autoSyncTimer = Timer.scheduledTimer(withTimeInterval: 900, repeats: true) { [weak self] _ in
+            guard let self = self, self.isConnected else { return }
+            self.syncVitals()
+        }
+    }
+
+    func stopAutoSyncTimer() {
+        autoSyncTimer?.invalidate()
+        autoSyncTimer = nil
+    }
+
     func syncVitals() {
         lastSyncStatus = "Syncing historical data..."
         
@@ -173,6 +191,13 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         // 5. Query Sleep (31 01)
         DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) {
             self.sendCommand([0x31, 0x01])
+        }
+
+        // 6. Complete Sync & Auto-Export
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.5) {
+            self.computeHRVMetrics()
+            self.lastSyncStatus = "Auto-Synced • \(Date().formatted(date: .omitted, time: .shortened))"
+            self.onDataSyncComplete?()
         }
     }
 

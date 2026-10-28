@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var bt = BluetoothManager()
     @StateObject private var hk = HealthKitManager()
     
@@ -316,36 +317,8 @@ struct ContentView: View {
                         Button(action: {
                             isSyncing = true
                             bt.syncVitals()
-                            
-                            // Re-calculate WHOOP-style metrics dynamically
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
-                                let hrv = bt.computedSDNN > 0 ? bt.computedSDNN : 127.4
-                                let rhr = bt.computedRestingHR > 0 ? bt.computedRestingHR : 61
-                                let spo2 = bt.spo2Records.last?.percent ?? 0.98
-
-                                let rec = MetricsEngine.calculateRecoveryScore(currentHRV: hrv, currentRHR: rhr, currentSpO2: spo2)
-                                self.recoveryScore = rec.score
-                                self.recoveryState = rec.state
-                                self.recoveryColor = (rec.color == "green" ? Color.green : (rec.color == "yellow" ? Color.yellow : Color.red))
-
-                                let strainRes = MetricsEngine.calculateDayStrain(hrRecords: bt.hrRecords, restingHR: rhr)
-                                self.dayStrain = strainRes.strain > 0 ? strainRes.strain : 12.4
-
-                                let sleepRes = MetricsEngine.calculateSleepPerformance(sleepStages: bt.sleepStages)
-                                self.sleepScore = sleepRes.score > 0 ? sleepRes.score : 88
-
-                                // Save directly to Apple Health (for Bevel)
-                                hk.saveAllVitals(
-                                    sdnn: hrv,
-                                    restingHR: rhr,
-                                    hrRecords: bt.hrRecords,
-                                    spo2Records: bt.spo2Records,
-                                    sleepStages: bt.sleepStages
-                                ) { success, msg in
-                                    isSyncing = false
-                                    alertMessage = msg
-                                    showAlert = true
-                                }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 5.5) {
+                                exportVitalsToAppleHealth(isUserInitiated: true)
                             }
                         }) {
                             HStack(spacing: 10) {
@@ -356,7 +329,7 @@ struct ContentView: View {
                                     Image(systemName: "bolt.heart.fill")
                                         .font(.system(size: 18))
                                 }
-                                Text("Sync Vitals & Export to Bevel")
+                                Text(isSyncing ? "Syncing..." : "Sync Vitals & Export to Bevel")
                                     .font(.system(size: 16, weight: .heavy, design: .rounded))
                             }
                             .foregroundColor(.black)
@@ -384,7 +357,7 @@ struct ContentView: View {
             }
         }
         .alert(isPresented: $showAlert) {
-            Alert(title: Text("Bevel & HealthKit Sync"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            Alert(title: Text("Zenflow & HealthKit Sync"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
         }
         .onAppear {
             // Initial calculations
@@ -393,9 +366,55 @@ struct ContentView: View {
             self.recoveryState = rec.state
             self.recoveryColor = (rec.color == "green" ? Color.green : (rec.color == "yellow" ? Color.yellow : Color.red))
 
+            // Connect Auto-Sync callback from BluetoothManager
+            bt.onDataSyncComplete = {
+                exportVitalsToAppleHealth(isUserInitiated: false)
+            }
+
             // Automatically prompt HealthKit modal once the UI scene is visible
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 hk.requestAuthorization()
+            }
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                if bt.isConnected {
+                    bt.syncVitals()
+                } else if !bt.isScanning {
+                    bt.startScan()
+                }
+            }
+        }
+    }
+
+    private func exportVitalsToAppleHealth(isUserInitiated: Bool = false) {
+        let hrv = bt.computedSDNN > 0 ? bt.computedSDNN : 127.4
+        let rhr = bt.computedRestingHR > 0 ? bt.computedRestingHR : 61
+        let spo2 = bt.spo2Records.last?.percent ?? 0.98
+
+        let rec = MetricsEngine.calculateRecoveryScore(currentHRV: hrv, currentRHR: rhr, currentSpO2: spo2)
+        self.recoveryScore = rec.score
+        self.recoveryState = rec.state
+        self.recoveryColor = (rec.color == "green" ? Color.green : (rec.color == "yellow" ? Color.yellow : Color.red))
+
+        let strainRes = MetricsEngine.calculateDayStrain(hrRecords: bt.hrRecords, restingHR: rhr)
+        self.dayStrain = strainRes.strain > 0 ? strainRes.strain : 12.4
+
+        let sleepRes = MetricsEngine.calculateSleepPerformance(sleepStages: bt.sleepStages)
+        self.sleepScore = sleepRes.score > 0 ? sleepRes.score : 88
+
+        // Save directly to Apple Health (for Bevel)
+        hk.saveAllVitals(
+            sdnn: hrv,
+            restingHR: rhr,
+            hrRecords: bt.hrRecords,
+            spo2Records: bt.spo2Records,
+            sleepStages: bt.sleepStages
+        ) { success, msg in
+            if isUserInitiated {
+                isSyncing = false
+                alertMessage = msg
+                showAlert = true
             }
         }
     }
